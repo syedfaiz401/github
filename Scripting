@@ -1,0 +1,29 @@
+--- #this is for httpd
+- hosts: all
+  become: yes
+  connection: ssh
+  user: faiz
+  vars:
+    a: https://github.com/selliott222/The-LionKing-the-Game-HTML5.git
+  tasks:
+    - name: installing docker
+      yum:
+        name: docker
+        state: present
+    - name: starting service
+      service:
+        name: docker
+        state: started
+    - name: cleaning countainers
+      shell:  docker rm -f count00
+    - name: deploying httpd countainers
+      command: docker run -d --name count00 -p 80:80 httpd
+    - name: deploying index.html
+      command: docker exec -it count00 rm -rf  /usr/local/apache2/htdocs/index.html
+    - name: installing git
+      command: docker exec -it count00 apt update -y
+    - name: update
+      command: docker exec -it count00 apt install git -y
+    - name: deploying web applincation on countainer
+      command: docker exec -it count00 git clone {{a}} /usr/local/apache2/htdocs/
+~
